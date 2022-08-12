@@ -1,0 +1,164 @@
+// prod index
+PUT /prod
+{
+  "mappings": {
+    "properties": {
+      "productCode": {
+      	"type": "keyword"
+      },
+      "productName": {
+      	"type": "text",
+      	"fields": {
+      		"field": {
+      			"type": "keyword"
+      		}
+      	},
+      	"analyzer": "analyzer_product"
+      },
+      "price": {
+      	"type": "integer"
+      },
+      "stockYN": {
+      	"type": "keyword"
+      },
+      "registerDate": {
+      	"type": "date",
+      	"ignore_malformed": true,
+      	"format": "yyyy-MM-dd HH:mm:ss"
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "tokenizer":{
+            "korean_nori_tokenizer":{
+              "type":"nori_tokenizer",
+              "decompound_mode":"mixed",
+              "user_dictionary":"user_dictionary.txt"
+            }
+          },
+          "analyzer": {
+            "analyzer_product": {
+              "type": "custom",
+              "tokenizer": "korean_nori_tokenizer",
+              "filter": [
+                "synonym"
+              ]
+            }
+          },
+          "filter": {
+            "synonym": {
+              "type": "synonym",
+              "synonyms_path": "synonyms.txt"
+            }
+          }
+      }
+    }
+  }
+}
+
+
+// 데이터 buil 입력
+POST _bulk
+{"index":{"_index":"prod", "_id":"1"}}
+{"productCode":"1",	"productName":"삼성전자 노트북 NT350XCR-A58M","price": 1500000,"stockYN":"Y","registerDate":"2022-08-12 06:20:20"}
+{"index":{"_index":"prod", "_id":"2"}}
+{"productCode":"2","productName":"삼성 notebook plus2 NT550XDZ-AD5A","price": 2000000,"stockYN":"N","registerDate":"2022-07-25 15:30:20"}
+{"index":{"_index":"prod", "_id":"3"}}
+{"productCode":"3","productName":"lg gram plus2 NT550XDZ-AD5A","price": 2500000,"stockYN":"Y","registerDate":"2022-04-01 01:20:20"}
+{"index":{"_index":"prod", "_id":"4"}}
+{"productCode":"4","productName":"samsung laptop","price": 500000,"stockYN":"Y","registerDate":"2022-01-01 16:59:20"}
+{"index":{"_index":"prod", "_id":"5"}}
+{"productCode":"5","productName":"레노버 아이디어패드 Slim3-15ITL","price": 1700000,"stockYN":"N","registerDate":"2021-01-25 02:20:20"}
+
+
+
+// 데이터 조회
+GET prod/_search
+
+// 결과
+{
+  "took" : 1,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 5,
+      "relation" : "eq"
+    },
+    "max_score" : 1.0,
+    "hits" : [
+      {
+        "_index" : "prod",
+        "_type" : "_doc",
+        "_id" : "1",
+        "_score" : 1.0,
+        "_source" : {
+          "productCode" : "1",
+          "productName" : "삼성전자 노트북 NT350XCR-A58M",
+          "price" : 1500000,
+          "stockYN" : "Y",
+          "registerDate" : "2022-08-12 06:20:20"
+        }
+      },
+      {
+        "_index" : "prod",
+        "_type" : "_doc",
+        "_id" : "2",
+        "_score" : 1.0,
+        "_source" : {
+          "productCode" : "2",
+          "productName" : "삼성 notebook plus2 NT550XDZ-AD5A",
+          "price" : 2000000,
+          "stockYN" : "N",
+          "registerDate" : "2022-07-25 15:30:20"
+        }
+      },
+      {
+        "_index" : "prod",
+        "_type" : "_doc",
+        "_id" : "3",
+        "_score" : 1.0,
+        "_source" : {
+          "productCode" : "3",
+          "productName" : "lg gram plus2 NT550XDZ-AD5A",
+          "price" : 2500000,
+          "stockYN" : "Y",
+          "registerDate" : "2022-04-01 01:20:20"
+        }
+      },
+      {
+        "_index" : "prod",
+        "_type" : "_doc",
+        "_id" : "4",
+        "_score" : 1.0,
+        "_source" : {
+          "productCode" : "4",
+          "productName" : "samsung laptop",
+          "price" : 500000,
+          "stockYN" : "Y",
+          "registerDate" : "2022-01-01 16:59:20"
+        }
+      },
+      {
+        "_index" : "prod",
+        "_type" : "_doc",
+        "_id" : "5",
+        "_score" : 1.0,
+        "_source" : {
+          "productCode" : "5",
+          "productName" : "레노버 아이디어패드 Slim3-15ITL",
+          "price" : 1700000,
+          "stockYN" : "N",
+          "registerDate" : "2021-01-25 02:20:20"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+version: '3.2'
+
+services:
+  es1:
+    container_name: es1
+    build:
+      context: "${PWD}/ELK/elasticsearch/"
+      dockerfile: elastic.Dockerfile
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: "${PWD}/ELK/elasticsearch/config/elasticsearch.yml"
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - "${PWD}/ELK/elasticsearch/data1:/usr/share/elasticsearch/data"
+      - "${PWD}/ELK/elasticsearch/nori/synonyms.txt:/usr/share/elasticsearch/config/synonyms.txt"
+      - "${PWD}/ELK/elasticsearch/nori/user_dictionary.txt:/usr/share/elasticsearch/config/user_dictionary.txt"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      node.name: es1
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: changeme
+      cluster.initial_master_nodes: es1,es2
+      discovery.seed_hosts: es2
+      #node.roles: master,data,ingest,transform
+      node.master: "true"
+      node.data: "true"
+      node.ingest: "true"
+      node.transform: "true"
+    networks:
+      - elk
+  es2:
+    container_name: es2
+    build:
+      context: "${PWD}/ELK/elasticsearch/"
+      dockerfile: elastic.Dockerfile
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: "${PWD}/ELK/elasticsearch/config/elasticsearch.yml"
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - "${PWD}/ELK/elasticsearch/data2:/usr/share/elasticsearch/data"
+      - "${PWD}/ELK/elasticsearch/nori/synonyms.txt:/usr/share/elasticsearch/config/synonyms.txt"
+      - "${PWD}/ELK/elasticsearch/nori/user_dictionary.txt:/usr/share/elasticsearch/config/user_dictionary.txt"
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    environment:
+      node.name: es2
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: changeme
+      cluster.initial_master_nodes: es1,es2
+      discovery.seed_hosts: es1
+      #node.roles: master,data,ingest,transform
+      node.master: "true"
+      node.data: "true"
+      node.ingest: "true"
+      node.transform: "true"
+    networks:
+      - elk
+
+  kibana:
+    container_name: kibana
+    build:
+      context: ELK/kibana/
+      dockerfile: kibana.Dockerfile
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: "${PWD}/ELK/kibana/config/kibana.yml"
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - es1
+
+networks:
+  elk:
+    driver: bridge
+
+volumes:
+  elasticsearch:
