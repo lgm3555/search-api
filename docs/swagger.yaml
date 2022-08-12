@@ -1,0 +1,63 @@
+definitions:
+  response.Response:
+    properties:
+      count:
+        type: integer
+      desc:
+        example: "null"
+        type: string
+      searchList: {}
+      status:
+        example: 200
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /prod/search:
+    get:
+      consumes:
+      - application/json
+      description: prod INDEX SEARCH
+      parameters:
+      - description: 상품명 키워드 삼성 노트북
+        in: query
+        name: keyword
+        required: true
+        type: string
+      - description: 최저 가격 5000
+        in: query
+        name: minPrice
+        required: true
+        type: string
+      - description: 최대 가격 6000
+        in: query
+        name: maxPrice
+        required: true
+        type: string
+      - description: 정렬 1|1
+        in: query
+        name: sort
+        required: true
+        type: string
+      - description: 시작 번호
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: 결과 개수
+        in: query
+        name: limit
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: prod INDEX SEARCH API
+      tags:
+      - prod INDEX API
+swagger: "2.0"
