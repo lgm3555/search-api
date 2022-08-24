@@ -9,5 +9,6 @@ import (
 func (r *Router) ProdRegister(router *gin.RouterGroup) {
 	c := controller.NewController()
 
-	router.GET("/search", c.ProdSearch)
+	router.GET("/", c.GetProd)
+	router.POST("/", c.PostProd)
 }

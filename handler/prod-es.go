@@ -19,7 +19,7 @@ import (
 
 var logger = utils.Logger
 
-func EsProdSearch(data map[string]string) (result response.Result, err error) {
+func GetProd(data map[string]string) (result response.Result, err error) {
 
 	// bool
 	query := elastic.NewBoolQuery()

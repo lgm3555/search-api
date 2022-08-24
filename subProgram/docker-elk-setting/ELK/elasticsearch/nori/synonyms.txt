@@ -1,7 +1,2 @@
-<<<<<<< HEAD
 노트북,notebook,laptop
 삼성,samsung
-=======
-삼성,samsung
-노트북,notebook,laptop
->>>>>>> f0f54204e84f6185f4e330023036f6871d270744

@@ -1,6 +1,7 @@
-package main
+package rabbitmqConn
 
 import (
+	"fmt"
 	"log"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -12,7 +13,7 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func main() {
+func InitRabbitMqClient() {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -22,12 +23,12 @@ func main() {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
+		"prod", // name
+		false,  // durable
+		false,  // delete when unused
+		false,  // exclusive
+		false,  // no-wait
+		nil,    // arguments
 	)
 	failOnError(err, "Failed to declare a queue")
 
@@ -46,7 +47,8 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
+			key := d.Body
+			fmt.Println(key)
 		}
 	}()
 

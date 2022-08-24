@@ -1,0 +1,20 @@
+CREATE TABLE `prod` (
+	`productCode` INT(10) NOT NULL AUTO_INCREMENT,
+	`productName` VARCHAR(200) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`price` INT(10) UNSIGNED NOT NULL,
+	`stockYN` CHAR(1) NOT NULL DEFAULT 'Y' COLLATE 'utf8mb4_0900_ai_ci',
+	`registerDate` DATETIME NOT NULL,
+	PRIMARY KEY (`productCode`) USING BTREE
+)
+COLLATE='utf8mb4_0900_ai_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=6
+;
+
+
+INSERT INTO `prod` (`productCode`, `productName`, `price`, `stockYN`, `registerDate`) VALUES
+	(1, '삼성전자 노트북 NT350XCR-A58M', 1500000, 'Y', '2022-08-12 06:20:20'),
+	(2, '삼성 notebook plus2 NT550XDZ-AD5A', 2000000, 'N', '2022-07-25 15:30:20'),
+	(3, 'lg gram plus2 NT550XDZ-AD5A', 2500000, 'Y', '2022-08-17 13:25:04'),
+	(4, 'samsung laptop', 500000, 'Y', '2022-01-01 16:59:20'),
+	(5, '레노버 아이디어패드 Slim3-15ITL', 1700000, 'N', '2021-01-25 02:20:20');

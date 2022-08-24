@@ -1,0 +1,7 @@
+version: "2"
+services:
+  ojt-search-api:
+    build: 
+      context: .
+    container_name: ojt-search-api
+    network_mode: host

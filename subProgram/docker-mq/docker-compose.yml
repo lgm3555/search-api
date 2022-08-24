@@ -1,13 +1,9 @@
 version: "2"
 services:
-  rabbitMQ:
-    image: openjdk:8
-    container_name: rabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.6-management
+    container_name: rabbitmq
     network_mode: host
-    volumes:
-      - "${PWD}/data:/data"
-    environment:
-      - LANG=ko_KR.euckr
     ports:
       - 5672:5672
       - 15672:15672
