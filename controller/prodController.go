@@ -32,7 +32,6 @@ func (c *Controller) GetProd(ctx *gin.Context) {
 	query["size"] = ctx.Query("limit")
 	query["keyword"] = ctx.Query("keyword")
 	query["sort"] = ctx.Query("sort")
-	query["limit"] = ctx.Query("limit")
 	query["minPrice"] = ctx.Query("minPrice")
 	query["maxPrice"] = ctx.Query("maxPrice")
 

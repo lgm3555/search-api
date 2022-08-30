@@ -1,55 +1,50 @@
 package main
 
 import (
-	"log"
+	"github.com/search-api/elasticConn"
+	"github.com/search-api/router"
 
-	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/gin-gonic/gin"
+	"github.com/search-api/docs"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Panicf("%s: %s", msg, err)
-	}
+func setRouter() *gin.Engine {
+	/*
+		Router 설정
+		단일 처리
+		e := gin.Default()
+		c := controller.NewController()
+		e.GET("/search", c.ProdSearch)
+	*/
+	e := gin.New()
+	rt := router.NewRouter()
+
+	//prod router register
+	rt.ProdRegister(e.Group("/prod"))
+
+	// swagger
+	e.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	return e
 }
 
 func main() {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
 
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
+	// release mode
+	gin.SetMode(gin.ReleaseMode)
 
-	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
-	)
-	failOnError(err, "Failed to declare a queue")
+	// elasticsearch connect
+	elasticConn.InitEsClient()
 
-	msgs, err := ch.Consume(
-		q.Name, // queue
-		"",     // consumer
-		true,   // auto-ack
-		false,  // exclusive
-		false,  // no-local
-		false,  // no-wait
-		nil,    // args
-	)
-	failOnError(err, "Failed to register a consumer")
+	// swagger setting
+	docs.SwaggerInfo.Title = "SEARCH-API Swagger"
+	//docs.SwaggerInfo.Description = "search-api PRJ swagger"
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.BasePath = ""
 
-	var forever chan struct{}
-
-	go func() {
-		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
-		}
-	}()
-
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	e := setRouter()
+	e.Run()
 }
